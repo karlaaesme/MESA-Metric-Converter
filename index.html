@@ -3,22 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mission College MESA Program - Metric Conversion Tool</title>
+    <title>Mission College MESA Program - Unit Conversion Tool</title>
     <style>
         :root {
-            --header-gradient: linear-gradient(90deg, #d32f2f, #e65100); 
+            --header-gradient: linear-gradient(90deg, #d32f2f, #e65100);
             --header-text: #ffffff;
-            --primary-btn: #003366;     
+            --primary-btn: #003366;     /* Mission College Blue */
             --primary-btn-hover: #0055a5;
-            --success: #15803d;        
+            --success: #15803d;        /* Accessible green */
             --success-hover: #166534;
             --bg-light: #f8fafc;
             --card-bg: #ffffff;
-            --text-main: #0f172a;      
+            --text-main: #0f172a;      /* High contrast body text */
             --text-muted: #334155;     
             --border: #94a3b8;
             --rail-line: #0f172a;
             --focus-ring: #0284c7;
+
+            /* Visual Diagram Colors from Attached Diagram */
+            --unit-starting: #0265d2;  /* Blue */
+            --unit-linking: #7e22ce;   /* Purple */
+            --unit-desired: #15803d;   /* Green */
         }
 
         * {
@@ -27,7 +32,8 @@
             padding: 0;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
         }
-        /* Focus Ring Styling for Keyboard Accessibility */
+
+        /* Keyboard Focus Ring */
         *:focus-visible {
             outline: 3px solid var(--focus-ring) !important;
             outline-offset: 2px !important;
@@ -73,7 +79,7 @@
         }
 
         .container {
-            max-width: 1050px;
+            max-width: 1100px;
             margin: 1.5rem auto 0;
             padding: 0 1rem;
         }
@@ -152,29 +158,12 @@
             background-color: var(--primary-btn-hover);
         }
 
-        .btn-add {
-            background-color: #15803d;
-        }
-
-        .btn-add:hover {
-            background-color: #166534;
-        }
-
-        .btn-clear {
-            background-color: #b91c1c;
-        }
-
-        .btn-clear:hover {
-            background-color: #991b1b;
-        }
-
-        .btn-next-green {
-            background-color: var(--success) !important;
-        }
-
-        .btn-next-green:hover {
-            background-color: var(--success-hover) !important;
-        }
+        .btn-add { background-color: #15803d; }
+        .btn-add:hover { background-color: #166534; }
+        .btn-clear { background-color: #b91c1c; }
+        .btn-clear:hover { background-color: #991b1b; }
+        .btn-next-green { background-color: var(--success) !important; }
+        .btn-next-green:hover { background-color: var(--success-hover) !important; }
 
         /* Railroad Track Grid Container */
         .railroad-wrapper {
@@ -264,7 +253,7 @@
             background-color: #f1f5f9;
             border-radius: 8px;
             border: 2px solid #b91c1c;
-            min-width: 150px;
+            min-width: 160px;
         }
 
         .remove-step-btn {
@@ -309,101 +298,107 @@
             display: inline-block;
             margin-top: 0.5rem;
             color: #0f172a;
+            word-break: break-all;
         }
 
-        /* Diagram Guide Section */
+        /* Diagram Guide Section (Matches Attached Reference Image) */
         .guide-diagram {
             display: flex;
             flex-direction: column;
             align-items: center;
-            background: #f1f5f9;
+            background: #ffffff;
             padding: 1.5rem;
-            border-radius: 8px;
+            border-radius: 12px;
             margin-bottom: 1.5rem;
             border: 1px solid #cbd5e1;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.04);
         }
 
-        .guide-row {
+        .factor-card {
+            display: flex;
+            align-items: center;
+            width: 100%;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .factor-badge {
+            width: 42px;
+            writing-mode: vertical-rl;
+            transform: rotate(180deg);
+            text-align: center;
+            font-weight: 800;
+            color: white;
+            padding: 1rem 0.4rem;
+            font-size: 0.95rem;
+            letter-spacing: 0.5px;
+            flex-shrink: 0;
+        }
+
+        .badge-blue { background-color: #0265d2; }
+        .badge-purple { background-color: #7e22ce; }
+
+        .factor-grid-row {
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 1rem;
-            flex-wrap: wrap;
+            flex-grow: 1;
+            padding: 1.25rem 1rem;
+            gap: 1.25rem;
+            overflow-x: auto;
         }
 
         .guide-grid {
-            display: grid;
-            grid-template-columns: auto 2px auto;
+            display: inline-flex;
             align-items: center;
             background: white;
-            border-bottom: 3px solid #334155;
-            padding: 0.5rem 1rem;
-            border-radius: 6px;
+            border-bottom: 2px solid #0f172a;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
         }
 
         .guide-line {
-            background-color: #334155;
-            height: 100%;
+            background-color: #0f172a;
+            height: 60px;
             width: 2px;
-            margin: 0 0.5rem;
+            margin: 0 0.75rem;
         }
 
         .guide-fraction {
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 0.25rem 0.5rem;
+            justify-content: center;
+            min-width: 100px;
+            text-align: center;
         }
 
         .guide-divider {
             width: 100%;
             height: 2px;
-            background-color: #334155;
+            background-color: #0f172a;
             margin: 0.35rem 0;
         }
 
-        .guide-blue { color: #0369a1; font-weight: bold; font-size: 1.2rem; }
-        .guide-green { color: #15803d; font-weight: bold; font-size: 1.2rem; }
+        .guide-blue { color: var(--unit-starting); font-weight: 800; font-size: 1.1rem; }
+        .guide-purple { color: var(--unit-linking); font-weight: 800; font-size: 1.1rem; }
+        .guide-green { color: var(--unit-desired); font-weight: 800; font-size: 1.1rem; }
 
-        .guide-cancel {
-            text-decoration: line-through;
-            text-decoration-color: #b91c1c;
-            text-decoration-thickness: 3px;
+        .guide-equals {
+            font-size: 1.6rem;
+            font-weight: bold;
+            color: #0f172a;
         }
 
-        .arrow-box {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            font-size: 0.9rem;
-            font-weight: bold;
-            color: #1e293b;
+        .guide-result-line {
+            border-bottom: 2px solid #0f172a;
+            padding: 0.25rem 1rem;
             text-align: center;
         }
 
-        .arrow-up-icon {
-            width: 0; height: 0; 
-            border-left: 8px solid transparent;
-            border-right: 8px solid transparent;
-            border-bottom: 12px solid #0284c7;
-            margin-bottom: 2px;
-        }
-
-        .arrow-down-icon {
-            width: 0; height: 0; 
-            border-left: 8px solid transparent;
-            border-right: 8px solid transparent;
-            border-top: 12px solid #0284c7;
-            margin-top: 2px;
-        }
-
-        .arrow-stem-icon {
-            width: 6px;
-            height: 18px;
-            background-color: #0284c7;
-        }
-
-        /* Practice Generator & Quick Converter Styling */
+        /* Practice Generator & Quick Converter */
         .problem-box {
             background-color: #f1f5f9;
             border-left: 6px solid #b91c1c;
@@ -455,7 +450,6 @@
             border: 2px solid #b91c1c;
         }
 
-        /* Quick Converter Box */
         .quick-convert-result {
             background: #f1f5f9;
             border: 2px solid #b91c1c;
@@ -465,7 +459,7 @@
             font-weight: bold;
             color: #15803d;
             display: inline-block;
-            min-width: 160px;
+            min-width: 170px;
             text-align: center;
         }
 
@@ -503,96 +497,84 @@
 
     <header role="banner">
         <h1>Mission College MESA Program</h1>
-        <p>Interactive Metric (SI) Dimensional Grid Conversion & Reference</p>
+        <p>Interactive Unit Conversion Tool (Standard & Metric Dimensional Analysis)</p>
     </header>
 
     <main class="container" role="main">
-        <!-- ARIA-Compliant Tab Navigation -->
+        <!-- Tab Navigation -->
         <div class="tabs" role="tablist" aria-label="Tool Navigation Options">
-            <button class="tab-btn" role="tab" id="tab-grid" aria-selected="true" aria-controls="grid-tab" onclick="switchTab('grid-tab')">Interactive NIST Grid</button>
+            <button class="tab-btn" role="tab" id="tab-grid" aria-selected="true" aria-controls="grid-tab" onclick="switchTab('grid-tab')">Interactive Grid</button>
             <button class="tab-btn" role="tab" id="tab-practice" aria-selected="false" aria-controls="practice-tab" onclick="switchTab('practice-tab')">Practice Generator</button>
-            <button class="tab-btn" role="tab" id="tab-reference" aria-selected="false" aria-controls="reference-tab" onclick="switchTab('reference-tab')">NIST Reference & Prefixes</button>
+            <button class="tab-btn" role="tab" id="tab-reference" aria-selected="false" aria-controls="reference-tab" onclick="switchTab('reference-tab')">Conversion Reference & Prefixes</button>
         </div>
 
-        <!-- TAB 1: INTERACTIVE NIST GRID -->
+        <!-- TAB 1: INTERACTIVE GRID -->
         <section id="grid-tab" class="tab-content active" role="tabpanel" aria-labelledby="tab-grid">
-            <!-- Accessible Diagram with Screen Reader Text -->
+            
+            <!-- Dimensional Analysis Diagram (Matches Attached Image) -->
             <div class="guide-diagram" aria-labelledby="diagram-title">
-                <h3 id="diagram-title" style="margin-bottom: 1rem; color: #0f172a;">How the Dimensional Analysis Grid Works</h3>
+                <h3 id="diagram-title" style="margin-bottom: 1.25rem; color: #0f172a; text-align: center;">Dimensional Analysis Setup Guide</h3>
                 
-                <!-- Screen Reader Text Description of Diagram -->
+                <!-- Screen Reader Only Description -->
                 <div class="sr-only">
-                    Example overview: Converting 5 meters to centimeters. Set up 5 meters in the first column, multiplied by a conversion fraction of 100 centimeters in the numerator and 1 meter in the denominator. The meter unit in the top left cancels with the meter unit in the bottom right, leaving 5 times 100 centimeters, which equals 500 centimeters.
+                    Diagram explanation of dimensional analysis:
+                    1) Single Factor: Starting Units multiplied by a fraction of Desired Units over Starting Units equals Desired Units. The Starting Units cancel diagonally.
+                    2) Multiple Factors: Starting Units multiplied by Linking Units over Starting Units, then multiplied by Desired Units over Linking Units, equals Desired Units. Both Starting Units and Linking Units cancel diagonally.
                 </div>
 
-                <!-- Visual Diagram (Hidden from Screen Readers to avoid redundant announcement) -->
-                <div aria-hidden="true" style="width: 100%;">
-                    <div class="guide-row">
-                        <div class="guide-grid">
-                            <div class="guide-fraction">
-                                <span class="guide-blue">5 m</span>
+                <!-- Visual Layout -->
+                <div aria-hidden="true" style="width: 100%; display: flex; flex-direction: column; gap: 1.25rem;">
+                    
+                    <!-- Single Factor Layout -->
+                    <div class="factor-card">
+                        <div class="factor-badge badge-blue">Single Factor</div>
+                        <div class="factor-grid-row">
+                            <div class="guide-grid">
+                                <div class="guide-fraction">
+                                    <span class="guide-blue">Starting Units</span>
+                                </div>
+                                <div class="guide-line"></div>
+                                <div class="guide-fraction">
+                                    <span class="guide-green">Desired Units</span>
+                                    <div class="guide-divider"></div>
+                                    <span class="guide-blue">Starting Units</span>
+                                </div>
                             </div>
-                            <div class="guide-line"></div>
-                            <div class="guide-fraction">
-                                <span class="guide-green">100 cm</span>
-                                <div class="guide-divider"></div>
-                                <span class="guide-blue">1 m</span>
+                            <div class="guide-equals">=</div>
+                            <div class="guide-result-line">
+                                <span class="guide-green">Desired Units</span>
                             </div>
-                        </div>
-                        <div style="font-size: 1.8rem; font-weight: bold; color: #334155;">=</div>
-                        <div style="border-bottom: 3px solid #334155; padding: 0.25rem 0.75rem;">
-                            <span class="guide-green">? cm</span>
                         </div>
                     </div>
 
-                    <div class="guide-row" style="gap: 2.5rem; margin: 0.75rem 0;">
-                        <div class="arrow-box">
-                            <div class="arrow-up-icon"></div>
-                            <div class="arrow-stem-icon"></div>
-                            <div>1) Unit you have</div>
-                        </div>
-                        <div class="arrow-box">
-                            <div class="arrow-up-icon"></div>
-                            <div class="arrow-stem-icon"></div>
-                            <div>3) Identify Conversion Factor</div>
-                        </div>
-                        <div class="arrow-box">
-                            <div class="arrow-up-icon"></div>
-                            <div class="arrow-stem-icon"></div>
-                            <div>2) Unit you want</div>
+                    <!-- Multiple Factors Layout -->
+                    <div class="factor-card">
+                        <div class="factor-badge badge-purple">Multiple Factors</div>
+                        <div class="factor-grid-row">
+                            <div class="guide-grid">
+                                <div class="guide-fraction">
+                                    <span class="guide-blue">Starting Units</span>
+                                </div>
+                                <div class="guide-line"></div>
+                                <div class="guide-fraction">
+                                    <span class="guide-purple">Linking Units</span>
+                                    <div class="guide-divider"></div>
+                                    <span class="guide-blue">Starting Units</span>
+                                </div>
+                                <div class="guide-line"></div>
+                                <div class="guide-fraction">
+                                    <span class="guide-green">Desired Units</span>
+                                    <div class="guide-divider"></div>
+                                    <span class="guide-purple">Linking Units</span>
+                                </div>
+                            </div>
+                            <div class="guide-equals">=</div>
+                            <div class="guide-result-line">
+                                <span class="guide-green">Desired Units</span>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="guide-row" style="gap: 3rem; margin-top: 0.5rem;">
-                        <div class="arrow-box">
-                            <div>4) Cancel Units + Perform Math</div>
-                            <div class="arrow-stem-icon"></div>
-                            <div class="arrow-down-icon"></div>
-                        </div>
-                        <div class="arrow-box">
-                            <div>5) Evaluate Result</div>
-                            <div class="arrow-stem-icon"></div>
-                            <div class="arrow-down-icon"></div>
-                        </div>
-                    </div>
-
-                    <div class="guide-row" style="margin-top: 0.5rem;">
-                        <div class="guide-grid">
-                            <div class="guide-fraction">
-                                <span><strong class="guide-blue">5</strong> <span class="guide-blue guide-cancel">m</span></span>
-                            </div>
-                            <div class="guide-line"></div>
-                            <div class="guide-fraction">
-                                <span class="guide-green">100 cm</span>
-                                <div class="guide-divider"></div>
-                                <span><strong class="guide-blue">1</strong> <span class="guide-blue guide-cancel">m</span></span>
-                            </div>
-                        </div>
-                        <div style="font-size: 1.8rem; font-weight: bold; color: #334155;">=</div>
-                        <div style="border-bottom: 3px solid #334155; padding: 0.25rem 0.75rem;">
-                            <span class="guide-green">500 cm</span>
-                        </div>
-                    </div>
                 </div>
             </div>
 
@@ -600,7 +582,7 @@
             <div class="card">
                 <h2>Multi-Step Conversion Workspace</h2>
                 <p style="color: var(--text-muted); margin-bottom: 1rem;">
-                    Build custom metric unit conversion steps. Select units from length, mass, and volume dropdowns.
+                    Convert between US Standard (Imperial) and Metric units step-by-step.
                 </p>
 
                 <div class="toolbar">
@@ -611,11 +593,11 @@
                 <!-- Interactive Railroad Track Grid -->
                 <div class="railroad-wrapper">
                     <div class="railroad-table" id="railroad-grid" role="group" aria-label="Dimensional Analysis Grid Steps">
-                        <!-- Dynamic Columns Injected via JS with ARIA Labels -->
+                        <!-- Dynamic Steps Injected via JS -->
                     </div>
                 </div>
 
-                <!-- Live Mathematical Solution Summary -->
+                <!-- Live Solution Panel -->
                 <div class="solution-panel" aria-live="polite" aria-atomic="true">
                     <h3>Calculation Breakdown & Solution</h3>
                     <div id="solution-text">Enter values in the track to compute results.</div>
@@ -627,11 +609,11 @@
             <div class="card">
                 <h2>Quick Unit Converter</h2>
                 <p style="color: var(--text-muted); margin-bottom: 1rem;">
-                    Instantly convert standard metric units without multi-step grid building.
+                    Instantly convert between Standard and Metric units across length, mass, and volume.
                 </p>
                 <div class="input-group">
                     <label for="qc-val" class="sr-only">Value to convert</label>
-                    <input type="number" id="qc-val" class="rr-input" style="width: 100px;" value="1" oninput="quickConvert()">
+                    <input type="number" id="qc-val" class="rr-input" style="width: 100px;" value="10" oninput="quickConvert()">
                     
                     <label for="qc-from" class="sr-only">From Unit</label>
                     <select id="qc-from" class="rr-unit-select" onchange="quickConvert()"></select>
@@ -643,7 +625,7 @@
 
                     <span style="font-weight: bold; font-size: 1.4rem; color: #334155;" aria-hidden="true">=</span>
 
-                    <div id="qc-result" class="quick-convert-result" aria-live="polite" role="status">100 cm</div>
+                    <div id="qc-result" class="quick-convert-result" aria-live="polite" role="status">25.4 cm</div>
                 </div>
             </div>
         </section>
@@ -652,7 +634,8 @@
         <section id="practice-tab" class="tab-content" role="tabpanel" aria-labelledby="tab-practice">
             <div class="card">
                 <h2>Practice Generator</h2>
-                
+                <p style="color: var(--text-muted); margin-bottom: 1rem;">Practice converting between Standard and Metric units.</p>
+
                 <div class="streak-bar" aria-live="polite">
                     Current Streak: <span id="streak">0</span> 🔥
                 </div>
@@ -660,10 +643,10 @@
                 <div class="input-group">
                     <label for="category-select"><strong>Select Category:</strong></label>
                     <select id="category-select" class="rr-unit-select" onchange="generateProblem()">
-                        <option value="all">All Categories</option>
-                        <option value="length">Length (m, km, cm, mm)</option>
-                        <option value="mass">Mass (g, kg, mg)</option>
-                        <option value="volume">Volume (L, mL, kL)</option>
+                        <option value="all">All Categories (Standard & Metric)</option>
+                        <option value="length">Length (in, ft, yd, mi, m, km, cm, mm)</option>
+                        <option value="mass">Mass / Weight (oz, lb, g, kg, mg)</option>
+                        <option value="volume">Volume (fl oz, qt, gal, L, mL, kL)</option>
                     </select>
                 </div>
 
@@ -684,17 +667,33 @@
             </div>
         </section>
 
-        <!-- TAB 3: NIST REFERENCE & PREFIXES -->
+        <!-- TAB 3: REFERENCE & PREFIXES -->
         <section id="reference-tab" class="tab-content" role="tabpanel" aria-labelledby="tab-reference">
+            
             <div class="card">
-                <h2>Best Practices for Dimensional Analysis</h2>
-                <ul class="best-practices-list">
-                    <li><strong>Identify Given & Desired Units First:</strong> Always begin by writing down your starting number with its unit on the far left, and note your final target unit on the right.</li>
-                    <li><strong>Set Up Diagonal Cancellation:</strong> Arrange your conversion factors so that unwanted units appear in opposite positions (numerator vs. denominator) to allow clean cancellation.</li>
-                    <li><strong>Multiply Top, Divide Bottom:</strong> When evaluating your grid, multiply all numerator values together, then divide by the product of all denominator values.</li>
-                    <li><strong>Perform Sanity Checks:</strong> Converting from a larger unit to a smaller unit (e.g., meters to centimeters) must produce a larger numerical value.</li>
-                    <li><strong>Maintain Proper Units throughout:</strong> Never write a number without its unit in your work—units are essential guideposts for verifying calculations.</li>
-                </ul>
+                <h2>US Standard $\leftrightarrow$ Metric Conversion Equivalencies</h2>
+                <p style="margin-bottom: 0.5rem;">Key conversion factors for STEM students switching between Imperial and SI Metric systems.</p>
+                <table>
+                    <caption>US Standard and Metric Unit Equivalencies</caption>
+                    <thead>
+                        <tr>
+                            <th scope="col">Measurement Type</th>
+                            <th scope="col">US Standard Unit</th>
+                            <th scope="col">Metric Equivalent</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>Length</td><td>1 inch (in)</td><td>2.54 centimeters (cm)</td></tr>
+                        <tr><td>Length</td><td>1 foot (ft)</td><td>0.3048 meters (m)</td></tr>
+                        <tr><td>Length</td><td>1 yard (yd)</td><td>0.9144 meters (m)</td></tr>
+                        <tr><td>Length</td><td>1 mile (mi)</td><td>1.60934 kilometers (km)</td></tr>
+                        <tr><td>Mass / Weight</td><td>1 ounce (oz)</td><td>28.3495 grams (g)</td></tr>
+                        <tr><td>Mass / Weight</td><td>1 pound (lb)</td><td>0.453592 kilograms (kg)</td></tr>
+                        <tr><td>Volume</td><td>1 fluid ounce (fl oz)</td><td>29.5735 milliliters (mL)</td></tr>
+                        <tr><td>Volume</td><td>1 quart (qt)</td><td>0.946353 liters (L)</td></tr>
+                        <tr><td>Volume</td><td>1 gallon (gal)</td><td>3.78541 liters (L)</td></tr>
+                    </tbody>
+                </table>
             </div>
 
             <div class="card">
@@ -721,46 +720,44 @@
                         <tr><td>Micro-</td><td>µ</td><td>0.000 001</td><td>10<sup>-6</sup></td></tr>
                     </tbody>
                 </table>
+            </div>
 
-                <h2 style="margin-top: 2rem;">Common Metric (SI) & Unit Conversions</h2>
-                <p style="margin-bottom: 0.5rem;">Standard conversion equivalencies used in chemistry, physics, and engineering.</p>
-                <table>
-                    <caption>Standard Unit Conversions Table</caption>
-                    <thead>
-                        <tr>
-                            <th scope="col">Measurement</th>
-                            <th scope="col">Metric / Base Unit</th>
-                            <th scope="col">Equivalent Value</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr><td>Length</td><td>1 kilometer (km)</td><td>1,000 meters (m)</td></tr>
-                        <tr><td>Length</td><td>1 meter (m)</td><td>100 centimeters (cm)</td></tr>
-                        <tr><td>Length</td><td>1 centimeter (cm)</td><td>10 millimeters (mm)</td></tr>
-                        <tr><td>Length</td><td>1 inch (in)</td><td>2.54 centimeters (cm)</td></tr>
-                        <tr><td>Mass</td><td>1 kilogram (kg)</td><td>1,000 grams (g)</td></tr>
-                        <tr><td>Mass</td><td>1 gram (g)</td><td>1,000 milligrams (mg)</td></tr>
-                        <tr><td>Mass</td><td>1 pound (lb)</td><td>453.592 grams (g)</td></tr>
-                        <tr><td>Volume</td><td>1 kiloliter (kL)</td><td>1,000 liters (L)</td></tr>
-                        <tr><td>Volume</td><td>1 liter (L)</td><td>1,000 milliliters (mL)</td></tr>
-                        <tr><td>Volume</td><td>1 milliliter (mL)</td><td>1 cubic centimeter (cm³)</td></tr>
-                    </tbody>
-                </table>
+            <div class="card">
+                <h2>Best Practices for Dimensional Analysis</h2>
+                <ul class="best-practices-list">
+                    <li><strong>Identify Starting & Desired Units First:</strong> Place your starting measurement in the top-left box, and note your target unit on the right.</li>
+                    <li><strong>Orient Conversion Factors Diagonally:</strong> Arrange conversion factors so unwanted units appear in opposite positions (numerator vs. denominator) for complete cancellation.</li>
+                    <li><strong>Multiply Top, Divide Bottom:</strong> Calculate the final answer by multiplying all numerators together and dividing by the product of all denominators.</li>
+                    <li><strong>Verify Reasonable Scale:</strong> Converting from a larger unit to a smaller unit (e.g., feet to centimeters) must result in a larger numerical value.</li>
+                </ul>
             </div>
         </section>
     </main>
 
     <script>
+        // Expanded Unit Dictionary (Metric + US Standard)
         const allUnits = {
-            "Length": ["m", "km", "cm", "mm"],
-            "Mass": ["g", "kg", "mg"],
-            "Volume": ["L", "mL", "kL"]
+            "Length (Metric)": ["m", "km", "cm", "mm"],
+            "Length (US Standard)": ["in", "ft", "yd", "mi"],
+            "Mass/Weight (Metric)": ["g", "kg", "mg"],
+            "Mass/Weight (US Standard)": ["oz", "lb"],
+            "Volume (Metric)": ["L", "mL", "kL"],
+            "Volume (US Standard)": ["fl oz", "qt", "gal"]
         };
 
+        // Conversion factors relative to standard base units (meter, gram, liter)
         const unitFactors = {
+            // Length (Base: meter)
             'm': 1, 'km': 1000, 'cm': 0.01, 'mm': 0.001,
+            'in': 0.0254, 'ft': 0.3048, 'yd': 0.9144, 'mi': 1609.344,
+
+            // Mass (Base: gram)
             'g': 1, 'kg': 1000, 'mg': 0.001,
-            'L': 1, 'kL': 1000, 'mL': 0.001
+            'oz': 28.349523, 'lb': 453.59237,
+
+            // Volume (Base: liter)
+            'L': 1, 'kL': 1000, 'mL': 0.001,
+            'fl oz': 0.0295735, 'qt': 0.946353, 'gal': 3.78541
         };
 
         let trackSteps = [];
@@ -778,15 +775,16 @@
         }
 
         function initDefaultTrack() {
+            // Standard to Metric Example (10 inches -> cm)
             trackSteps = [
-                { numVal: 5, numUnit: 'm', denVal: 1, denUnit: '' },
-                { numVal: 100, numUnit: 'cm', denVal: 1, denUnit: 'm' }
+                { numVal: 10, numUnit: 'in', denVal: 1, denUnit: '' },
+                { numVal: 2.54, numUnit: 'cm', denVal: 1, denUnit: 'in' }
             ];
             renderTrack();
         }
 
         function addStep() {
-            trackSteps.push({ numVal: 1, numUnit: 'cm', denVal: 1, denUnit: 'm' });
+            trackSteps.push({ numVal: 1, numUnit: 'cm', denVal: 1, denUnit: 'in' });
             renderTrack();
         }
 
@@ -860,7 +858,7 @@
                     <div class="rr-result-box">
                         <div style="font-size: 0.85rem; font-weight: 800; color: var(--text-muted);">FINAL RESULT</div>
                         <div id="result-val-display" style="font-size: 1.3rem; font-weight: bold; color: #15803d;">0</div>
-                        <div id="result-unit-display" style="font-size: 1rem; font-weight: bold; color: #0369a1;">unit</div>
+                        <div id="result-unit-display" style="font-size: 1rem; font-weight: bold; color: #0265d2;">unit</div>
                     </div>
                 </div>
             `;
@@ -949,7 +947,7 @@
             fromSelect.innerHTML = html;
             toSelect.innerHTML = html;
 
-            fromSelect.value = 'm';
+            fromSelect.value = 'in';
             toSelect.value = 'cm';
             
             quickConvert();
@@ -966,10 +964,15 @@
                 return;
             }
 
-            let fromCat = Object.keys(allUnits).find(cat => allUnits[cat].includes(from));
-            let toCat = Object.keys(allUnits).find(cat => allUnits[cat].includes(to));
+            // Check category compatibility
+            const getCategoryType = (u) => {
+                if (['m', 'km', 'cm', 'mm', 'in', 'ft', 'yd', 'mi'].includes(u)) return 'length';
+                if (['g', 'kg', 'mg', 'oz', 'lb'].includes(u)) return 'mass';
+                if (['L', 'mL', 'kL', 'fl oz', 'qt', 'gal'].includes(u)) return 'volume';
+                return null;
+            };
 
-            if (fromCat !== toCat) {
+            if (getCategoryType(from) !== getCategoryType(to)) {
                 resElem.textContent = "Incompatible Units";
                 resElem.style.color = "#b91c1c";
                 return;
@@ -992,17 +995,17 @@
         let currentProblem = null;
         let streak = 0;
 
-        const quizData = {
-            length: ['m', 'km', 'cm', 'mm'],
-            mass: ['g', 'kg', 'mg'],
-            volume: ['L', 'mL', 'kL']
+        const quizCategories = {
+            length: ['in', 'ft', 'yd', 'mi', 'm', 'km', 'cm', 'mm'],
+            mass: ['oz', 'lb', 'g', 'kg', 'mg'],
+            volume: ['fl oz', 'qt', 'gal', 'L', 'mL', 'kL']
         };
 
         function generateProblem() {
             const cat = document.getElementById('category-select').value;
             let categories = cat === 'all' ? ['length', 'mass', 'volume'] : [cat];
             let chosenCat = categories[Math.floor(Math.random() * categories.length)];
-            let units = quizData[chosenCat];
+            let units = quizCategories[chosenCat];
 
             let fromUnit = units[Math.floor(Math.random() * units.length)];
             let toUnit;
@@ -1043,8 +1046,8 @@
                 return;
             }
 
-            const margin = Math.abs(currentProblem.answer * 0.01);
-            const isCorrect = Math.abs(userVal - currentProblem.answer) <= Math.max(margin, 0.0001);
+            const margin = Math.abs(currentProblem.answer * 0.015); // 1.5% tolerance
+            const isCorrect = Math.abs(userVal - currentProblem.answer) <= Math.max(margin, 0.001);
 
             if (isCorrect) {
                 streak++;

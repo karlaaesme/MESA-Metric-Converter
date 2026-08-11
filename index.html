@@ -1,0 +1,1072 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mission College MESA Program - Metric Conversion Tool</title>
+    <style>
+        :root {
+            --header-gradient: linear-gradient(90deg, #d32f2f, #e65100); 
+            --header-text: #ffffff;
+            --primary-btn: #003366;     
+            --primary-btn-hover: #0055a5;
+            --success: #15803d;        
+            --success-hover: #166534;
+            --bg-light: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #0f172a;      
+            --text-muted: #334155;     
+            --border: #94a3b8;
+            --rail-line: #0f172a;
+            --focus-ring: #0284c7;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        /* Focus Ring Styling for Keyboard Accessibility */
+        *:focus-visible {
+            outline: 3px solid var(--focus-ring) !important;
+            outline-offset: 2px !important;
+        }
+
+        /* Screen Reader Only Utility Class */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        body {
+            background-color: var(--bg-light);
+            color: var(--text-main);
+            line-height: 1.6;
+            padding-bottom: 3rem;
+        }
+
+        header {
+            background: var(--header-gradient);
+            color: var(--header-text);
+            padding: 1.5rem 1rem;
+            text-align: center;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        header h1 {
+            font-size: 2rem;
+            margin-bottom: 0.25rem;
+            font-weight: 800;
+        }
+
+        header p {
+            color: #ffffff;
+            font-size: 1.05rem;
+        }
+
+        .container {
+            max-width: 1050px;
+            margin: 1.5rem auto 0;
+            padding: 0 1rem;
+        }
+
+        /* Tab Navigation - ARIA Compliant */
+        .tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid #cbd5e1;
+        }
+
+        .tab-btn {
+            padding: 0.75rem 1.25rem;
+            border: none;
+            background: none;
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            cursor: pointer;
+            border-bottom: 4px solid transparent;
+            transition: all 0.2s ease;
+        }
+
+        .tab-btn[aria-selected="true"] {
+            color: #b91c1c;
+            border-bottom-color: #b91c1c;
+            background-color: #f1f5f9;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.75rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+            margin-bottom: 1.5rem;
+        }
+
+        .card h2 {
+            color: #0f172a;
+            margin-bottom: 0.5rem;
+            font-size: 1.4rem;
+        }
+
+        /* Toolbar Buttons */
+        .toolbar {
+            display: flex;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .btn {
+            background-color: var(--primary-btn);
+            color: white;
+            border: none;
+            padding: 0.65rem 1.25rem;
+            font-size: 1rem;
+            font-weight: 700;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn:hover {
+            background-color: var(--primary-btn-hover);
+        }
+
+        .btn-add {
+            background-color: #15803d;
+        }
+
+        .btn-add:hover {
+            background-color: #166534;
+        }
+
+        .btn-clear {
+            background-color: #b91c1c;
+        }
+
+        .btn-clear:hover {
+            background-color: #991b1b;
+        }
+
+        .btn-next-green {
+            background-color: var(--success) !important;
+        }
+
+        .btn-next-green:hover {
+            background-color: var(--success-hover) !important;
+        }
+
+        /* Railroad Track Grid Container */
+        .railroad-wrapper {
+            overflow-x: auto;
+            padding: 1rem 0;
+            margin-bottom: 1rem;
+        }
+
+        .railroad-table {
+            display: inline-flex;
+            align-items: center;
+            border-collapse: collapse;
+            font-size: 1.1rem;
+            background: white;
+            padding: 1rem;
+            border-radius: 8px;
+            box-shadow: inset 0 0 0 1px #cbd5e1;
+        }
+
+        .rr-cell {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 0 0.75rem;
+            position: relative;
+        }
+
+        .rr-cell:not(:last-child) {
+            border-right: 2px solid var(--rail-line);
+        }
+
+        .rr-numerator {
+            padding-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+        }
+
+        .rr-divider {
+            width: 100%;
+            height: 2px;
+            background-color: var(--rail-line);
+        }
+
+        .rr-denominator {
+            padding-top: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+        }
+
+        .rr-input {
+            width: 85px;
+            padding: 0.4rem;
+            font-size: 1rem;
+            font-weight: 700;
+            text-align: center;
+            border: 2px solid var(--border);
+            border-radius: 4px;
+            color: var(--text-main);
+        }
+
+        .rr-unit-select {
+            padding: 0.4rem 0.5rem;
+            font-size: 0.95rem;
+            font-weight: bold;
+            border: 2px solid var(--border);
+            border-radius: 4px;
+            background-color: white;
+            color: var(--text-main);
+            cursor: pointer;
+        }
+
+        .rr-equals {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--rail-line);
+            padding: 0 1rem;
+        }
+
+        .rr-result-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 0.75rem 1.25rem;
+            background-color: #f1f5f9;
+            border-radius: 8px;
+            border: 2px solid #b91c1c;
+            min-width: 150px;
+        }
+
+        .remove-step-btn {
+            position: absolute;
+            top: -26px;
+            right: 2px;
+            background: none;
+            border: none;
+            color: #b91c1c;
+            font-weight: bold;
+            font-size: 0.9rem;
+            cursor: pointer;
+            padding: 2px 4px;
+        }
+
+        .remove-step-btn:hover {
+            text-decoration: underline;
+        }
+
+        /* Mathematical Solution Summary */
+        .solution-panel {
+            background: #f8fafc;
+            border: 2px dashed var(--border);
+            border-radius: 8px;
+            padding: 1.25rem;
+            margin-top: 1rem;
+        }
+
+        .solution-panel h3 {
+            font-size: 1.15rem;
+            color: var(--text-main);
+            margin-bottom: 0.5rem;
+        }
+
+        .math-expr {
+            font-family: "Courier New", Courier, monospace;
+            font-size: 1.05rem;
+            font-weight: bold;
+            background: #e2e8f0;
+            padding: 0.6rem 0.8rem;
+            border-radius: 4px;
+            display: inline-block;
+            margin-top: 0.5rem;
+            color: #0f172a;
+        }
+
+        /* Diagram Guide Section */
+        .guide-diagram {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: #f1f5f9;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            border: 1px solid #cbd5e1;
+        }
+
+        .guide-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .guide-grid {
+            display: grid;
+            grid-template-columns: auto 2px auto;
+            align-items: center;
+            background: white;
+            border-bottom: 3px solid #334155;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+        }
+
+        .guide-line {
+            background-color: #334155;
+            height: 100%;
+            width: 2px;
+            margin: 0 0.5rem;
+        }
+
+        .guide-fraction {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 0.25rem 0.5rem;
+        }
+
+        .guide-divider {
+            width: 100%;
+            height: 2px;
+            background-color: #334155;
+            margin: 0.35rem 0;
+        }
+
+        .guide-blue { color: #0369a1; font-weight: bold; font-size: 1.2rem; }
+        .guide-green { color: #15803d; font-weight: bold; font-size: 1.2rem; }
+
+        .guide-cancel {
+            text-decoration: line-through;
+            text-decoration-color: #b91c1c;
+            text-decoration-thickness: 3px;
+        }
+
+        .arrow-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-size: 0.9rem;
+            font-weight: bold;
+            color: #1e293b;
+            text-align: center;
+        }
+
+        .arrow-up-icon {
+            width: 0; height: 0; 
+            border-left: 8px solid transparent;
+            border-right: 8px solid transparent;
+            border-bottom: 12px solid #0284c7;
+            margin-bottom: 2px;
+        }
+
+        .arrow-down-icon {
+            width: 0; height: 0; 
+            border-left: 8px solid transparent;
+            border-right: 8px solid transparent;
+            border-top: 12px solid #0284c7;
+            margin-top: 2px;
+        }
+
+        .arrow-stem-icon {
+            width: 6px;
+            height: 18px;
+            background-color: #0284c7;
+        }
+
+        /* Practice Generator & Quick Converter Styling */
+        .problem-box {
+            background-color: #f1f5f9;
+            border-left: 6px solid #b91c1c;
+            padding: 1.25rem;
+            border-radius: 6px;
+            font-size: 1.25rem;
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .streak-bar {
+            background: #e2e8f0;
+            padding: 0.6rem 1.2rem;
+            border-radius: 8px;
+            font-weight: 800;
+            display: inline-block;
+            margin-bottom: 1.25rem;
+            font-size: 1.1rem;
+        }
+
+        .feedback {
+            margin-top: 1rem;
+            padding: 1rem;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 1.05rem;
+            display: none;
+        }
+
+        .feedback.success {
+            display: block;
+            background-color: #dcfce7;
+            color: #14532d;
+            border: 2px solid #15803d;
+        }
+
+        .feedback.error {
+            display: block;
+            background-color: #fee2e2;
+            color: #7f1d1d;
+            border: 2px solid #b91c1c;
+        }
+
+        /* Quick Converter Box */
+        .quick-convert-result {
+            background: #f1f5f9;
+            border: 2px solid #b91c1c;
+            border-radius: 8px;
+            padding: 0.75rem 1.25rem;
+            font-size: 1.25rem;
+            font-weight: bold;
+            color: #15803d;
+            display: inline-block;
+            min-width: 160px;
+            text-align: center;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        th, td {
+            text-align: left;
+            padding: 0.85rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        th {
+            background-color: #e2e8f0;
+            color: #0f172a;
+            font-weight: 800;
+        }
+
+        .best-practices-list {
+            padding-left: 1.25rem;
+            margin-top: 0.75rem;
+            color: var(--text-main);
+        }
+
+        .best-practices-list li {
+            margin-bottom: 0.75rem;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+
+    <header role="banner">
+        <h1>Mission College MESA Program</h1>
+        <p>Interactive Metric (SI) Dimensional Grid Conversion & Reference</p>
+    </header>
+
+    <main class="container" role="main">
+        <!-- ARIA-Compliant Tab Navigation -->
+        <div class="tabs" role="tablist" aria-label="Tool Navigation Options">
+            <button class="tab-btn" role="tab" id="tab-grid" aria-selected="true" aria-controls="grid-tab" onclick="switchTab('grid-tab')">Interactive NIST Grid</button>
+            <button class="tab-btn" role="tab" id="tab-practice" aria-selected="false" aria-controls="practice-tab" onclick="switchTab('practice-tab')">Practice Generator</button>
+            <button class="tab-btn" role="tab" id="tab-reference" aria-selected="false" aria-controls="reference-tab" onclick="switchTab('reference-tab')">NIST Reference & Prefixes</button>
+        </div>
+
+        <!-- TAB 1: INTERACTIVE NIST GRID -->
+        <section id="grid-tab" class="tab-content active" role="tabpanel" aria-labelledby="tab-grid">
+            <!-- Accessible Diagram with Screen Reader Text -->
+            <div class="guide-diagram" aria-labelledby="diagram-title">
+                <h3 id="diagram-title" style="margin-bottom: 1rem; color: #0f172a;">How the Dimensional Analysis Grid Works</h3>
+                
+                <!-- Screen Reader Text Description of Diagram -->
+                <div class="sr-only">
+                    Example overview: Converting 5 meters to centimeters. Set up 5 meters in the first column, multiplied by a conversion fraction of 100 centimeters in the numerator and 1 meter in the denominator. The meter unit in the top left cancels with the meter unit in the bottom right, leaving 5 times 100 centimeters, which equals 500 centimeters.
+                </div>
+
+                <!-- Visual Diagram (Hidden from Screen Readers to avoid redundant announcement) -->
+                <div aria-hidden="true" style="width: 100%;">
+                    <div class="guide-row">
+                        <div class="guide-grid">
+                            <div class="guide-fraction">
+                                <span class="guide-blue">5 m</span>
+                            </div>
+                            <div class="guide-line"></div>
+                            <div class="guide-fraction">
+                                <span class="guide-green">100 cm</span>
+                                <div class="guide-divider"></div>
+                                <span class="guide-blue">1 m</span>
+                            </div>
+                        </div>
+                        <div style="font-size: 1.8rem; font-weight: bold; color: #334155;">=</div>
+                        <div style="border-bottom: 3px solid #334155; padding: 0.25rem 0.75rem;">
+                            <span class="guide-green">? cm</span>
+                        </div>
+                    </div>
+
+                    <div class="guide-row" style="gap: 2.5rem; margin: 0.75rem 0;">
+                        <div class="arrow-box">
+                            <div class="arrow-up-icon"></div>
+                            <div class="arrow-stem-icon"></div>
+                            <div>1) Unit you have</div>
+                        </div>
+                        <div class="arrow-box">
+                            <div class="arrow-up-icon"></div>
+                            <div class="arrow-stem-icon"></div>
+                            <div>3) Identify Conversion Factor</div>
+                        </div>
+                        <div class="arrow-box">
+                            <div class="arrow-up-icon"></div>
+                            <div class="arrow-stem-icon"></div>
+                            <div>2) Unit you want</div>
+                        </div>
+                    </div>
+
+                    <div class="guide-row" style="gap: 3rem; margin-top: 0.5rem;">
+                        <div class="arrow-box">
+                            <div>4) Cancel Units + Perform Math</div>
+                            <div class="arrow-stem-icon"></div>
+                            <div class="arrow-down-icon"></div>
+                        </div>
+                        <div class="arrow-box">
+                            <div>5) Evaluate Result</div>
+                            <div class="arrow-stem-icon"></div>
+                            <div class="arrow-down-icon"></div>
+                        </div>
+                    </div>
+
+                    <div class="guide-row" style="margin-top: 0.5rem;">
+                        <div class="guide-grid">
+                            <div class="guide-fraction">
+                                <span><strong class="guide-blue">5</strong> <span class="guide-blue guide-cancel">m</span></span>
+                            </div>
+                            <div class="guide-line"></div>
+                            <div class="guide-fraction">
+                                <span class="guide-green">100 cm</span>
+                                <div class="guide-divider"></div>
+                                <span><strong class="guide-blue">1</strong> <span class="guide-blue guide-cancel">m</span></span>
+                            </div>
+                        </div>
+                        <div style="font-size: 1.8rem; font-weight: bold; color: #334155;">=</div>
+                        <div style="border-bottom: 3px solid #334155; padding: 0.25rem 0.75rem;">
+                            <span class="guide-green">500 cm</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Workspace Card -->
+            <div class="card">
+                <h2>Multi-Step Conversion Workspace</h2>
+                <p style="color: var(--text-muted); margin-bottom: 1rem;">
+                    Build custom metric unit conversion steps. Select units from length, mass, and volume dropdowns.
+                </p>
+
+                <div class="toolbar">
+                    <button class="btn btn-add" onclick="addStep()">+ Add Conversion Factor</button>
+                    <button class="btn btn-clear" onclick="resetTrack()">Reset Workspace</button>
+                </div>
+
+                <!-- Interactive Railroad Track Grid -->
+                <div class="railroad-wrapper">
+                    <div class="railroad-table" id="railroad-grid" role="group" aria-label="Dimensional Analysis Grid Steps">
+                        <!-- Dynamic Columns Injected via JS with ARIA Labels -->
+                    </div>
+                </div>
+
+                <!-- Live Mathematical Solution Summary -->
+                <div class="solution-panel" aria-live="polite" aria-atomic="true">
+                    <h3>Calculation Breakdown & Solution</h3>
+                    <div id="solution-text">Enter values in the track to compute results.</div>
+                    <div id="math-expression" class="math-expr">Calculation string will appear here...</div>
+                </div>
+            </div>
+
+            <!-- Quick Converter Box -->
+            <div class="card">
+                <h2>Quick Unit Converter</h2>
+                <p style="color: var(--text-muted); margin-bottom: 1rem;">
+                    Instantly convert standard metric units without multi-step grid building.
+                </p>
+                <div class="input-group">
+                    <label for="qc-val" class="sr-only">Value to convert</label>
+                    <input type="number" id="qc-val" class="rr-input" style="width: 100px;" value="1" oninput="quickConvert()">
+                    
+                    <label for="qc-from" class="sr-only">From Unit</label>
+                    <select id="qc-from" class="rr-unit-select" onchange="quickConvert()"></select>
+
+                    <span style="font-weight: bold; font-size: 1.2rem; color: #334155;" aria-hidden="true">to</span>
+
+                    <label for="qc-to" class="sr-only">To Unit</label>
+                    <select id="qc-to" class="rr-unit-select" onchange="quickConvert()"></select>
+
+                    <span style="font-weight: bold; font-size: 1.4rem; color: #334155;" aria-hidden="true">=</span>
+
+                    <div id="qc-result" class="quick-convert-result" aria-live="polite" role="status">100 cm</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 2: PRACTICE GENERATOR -->
+        <section id="practice-tab" class="tab-content" role="tabpanel" aria-labelledby="tab-practice">
+            <div class="card">
+                <h2>Practice Generator</h2>
+                
+                <div class="streak-bar" aria-live="polite">
+                    Current Streak: <span id="streak">0</span> 🔥
+                </div>
+
+                <div class="input-group">
+                    <label for="category-select"><strong>Select Category:</strong></label>
+                    <select id="category-select" class="rr-unit-select" onchange="generateProblem()">
+                        <option value="all">All Categories</option>
+                        <option value="length">Length (m, km, cm, mm)</option>
+                        <option value="mass">Mass (g, kg, mg)</option>
+                        <option value="volume">Volume (L, mL, kL)</option>
+                    </select>
+                </div>
+
+                <div class="problem-box" id="problem-text" aria-live="polite">
+                    Loading problem...
+                </div>
+
+                <div class="input-group">
+                    <label for="user-answer" class="sr-only">Your Numeric Answer</label>
+                    <input type="number" id="user-answer" class="rr-input" style="width: 140px;" step="any" placeholder="Answer">
+                    <span id="target-unit" style="font-weight: bold; font-size: 1.1rem;"></span>
+                    <button class="btn" onclick="checkAnswer()">Submit</button>
+                    <button id="next-btn" class="btn" onclick="generateProblem()">Next Problem</button>
+                    <button class="btn btn-clear" onclick="resetPractice()">Reset Streak</button>
+                </div>
+
+                <div id="feedback-box" class="feedback" aria-live="assertive" role="alert"></div>
+            </div>
+        </section>
+
+        <!-- TAB 3: NIST REFERENCE & PREFIXES -->
+        <section id="reference-tab" class="tab-content" role="tabpanel" aria-labelledby="tab-reference">
+            <div class="card">
+                <h2>Best Practices for Dimensional Analysis</h2>
+                <ul class="best-practices-list">
+                    <li><strong>Identify Given & Desired Units First:</strong> Always begin by writing down your starting number with its unit on the far left, and note your final target unit on the right.</li>
+                    <li><strong>Set Up Diagonal Cancellation:</strong> Arrange your conversion factors so that unwanted units appear in opposite positions (numerator vs. denominator) to allow clean cancellation.</li>
+                    <li><strong>Multiply Top, Divide Bottom:</strong> When evaluating your grid, multiply all numerator values together, then divide by the product of all denominator values.</li>
+                    <li><strong>Perform Sanity Checks:</strong> Converting from a larger unit to a smaller unit (e.g., meters to centimeters) must produce a larger numerical value.</li>
+                    <li><strong>Maintain Proper Units throughout:</strong> Never write a number without its unit in your work—units are essential guideposts for verifying calculations.</li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <h2>NIST Metric (SI) Prefixes</h2>
+                <p style="margin-bottom: 0.5rem;">Official NIST SP 811 Appendix B metric prefix scales.</p>
+                <table>
+                    <caption>NIST Metric Prefixes Table</caption>
+                    <thead>
+                        <tr>
+                            <th scope="col">Prefix</th>
+                            <th scope="col">Symbol</th>
+                            <th scope="col">Factor</th>
+                            <th scope="col">Scientific Notation</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>Kilo-</td><td>k</td><td>1,000</td><td>10<sup>3</sup></td></tr>
+                        <tr><td>Hecto-</td><td>h</td><td>100</td><td>10<sup>2</sup></td></tr>
+                        <tr><td>Deka-</td><td>da</td><td>10</td><td>10<sup>1</sup></td></tr>
+                        <tr><td><em>Base Unit</em></td><td>-</td><td>1</td><td>10<sup>0</sup></td></tr>
+                        <tr><td>Deci-</td><td>d</td><td>0.1</td><td>10<sup>-1</sup></td></tr>
+                        <tr><td>Centi-</td><td>c</td><td>0.01</td><td>10<sup>-2</sup></td></tr>
+                        <tr><td>Milli-</td><td>m</td><td>0.001</td><td>10<sup>-3</sup></td></tr>
+                        <tr><td>Micro-</td><td>µ</td><td>0.000 001</td><td>10<sup>-6</sup></td></tr>
+                    </tbody>
+                </table>
+
+                <h2 style="margin-top: 2rem;">Common Metric (SI) & Unit Conversions</h2>
+                <p style="margin-bottom: 0.5rem;">Standard conversion equivalencies used in chemistry, physics, and engineering.</p>
+                <table>
+                    <caption>Standard Unit Conversions Table</caption>
+                    <thead>
+                        <tr>
+                            <th scope="col">Measurement</th>
+                            <th scope="col">Metric / Base Unit</th>
+                            <th scope="col">Equivalent Value</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>Length</td><td>1 kilometer (km)</td><td>1,000 meters (m)</td></tr>
+                        <tr><td>Length</td><td>1 meter (m)</td><td>100 centimeters (cm)</td></tr>
+                        <tr><td>Length</td><td>1 centimeter (cm)</td><td>10 millimeters (mm)</td></tr>
+                        <tr><td>Length</td><td>1 inch (in)</td><td>2.54 centimeters (cm)</td></tr>
+                        <tr><td>Mass</td><td>1 kilogram (kg)</td><td>1,000 grams (g)</td></tr>
+                        <tr><td>Mass</td><td>1 gram (g)</td><td>1,000 milligrams (mg)</td></tr>
+                        <tr><td>Mass</td><td>1 pound (lb)</td><td>453.592 grams (g)</td></tr>
+                        <tr><td>Volume</td><td>1 kiloliter (kL)</td><td>1,000 liters (L)</td></tr>
+                        <tr><td>Volume</td><td>1 liter (L)</td><td>1,000 milliliters (mL)</td></tr>
+                        <tr><td>Volume</td><td>1 milliliter (mL)</td><td>1 cubic centimeter (cm³)</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        const allUnits = {
+            "Length": ["m", "km", "cm", "mm"],
+            "Mass": ["g", "kg", "mg"],
+            "Volume": ["L", "mL", "kL"]
+        };
+
+        const unitFactors = {
+            'm': 1, 'km': 1000, 'cm': 0.01, 'mm': 0.001,
+            'g': 1, 'kg': 1000, 'mg': 0.001,
+            'L': 1, 'kL': 1000, 'mL': 0.001
+        };
+
+        let trackSteps = [];
+
+        function switchTab(tabId) {
+            const tabs = ['grid-tab', 'practice-tab', 'reference-tab'];
+            const btns = ['tab-grid', 'tab-practice', 'tab-reference'];
+
+            tabs.forEach((id, idx) => {
+                const active = id === tabId;
+                document.getElementById(id).classList.toggle('active', active);
+                const btn = document.getElementById(btns[idx]);
+                btn.setAttribute('aria-selected', active ? 'true' : 'false');
+            });
+        }
+
+        function initDefaultTrack() {
+            trackSteps = [
+                { numVal: 5, numUnit: 'm', denVal: 1, denUnit: '' },
+                { numVal: 100, numUnit: 'cm', denVal: 1, denUnit: 'm' }
+            ];
+            renderTrack();
+        }
+
+        function addStep() {
+            trackSteps.push({ numVal: 1, numUnit: 'cm', denVal: 1, denUnit: 'm' });
+            renderTrack();
+        }
+
+        function removeStep(index) {
+            if (trackSteps.length <= 1) return;
+            trackSteps.splice(index, 1);
+            renderTrack();
+        }
+
+        function resetTrack() {
+            initDefaultTrack();
+        }
+
+        function updateStepValue(index, field, value) {
+            trackSteps[index][field] = value;
+            calculateAndRenderSolution();
+        }
+
+        function buildUnitSelectHtml(selectedUnit, index, field, ariaLabel) {
+            let html = `<select class="rr-unit-select" aria-label="${ariaLabel}" onchange="updateStepValue(${index}, '${field}', this.value)">`;
+            html += `<option value="" ${selectedUnit === '' ? 'selected' : ''}>--</option>`;
+            
+            for (let group in allUnits) {
+                html += `<optgroup label="${group}">`;
+                allUnits[group].forEach(u => {
+                    const sel = u === selectedUnit ? 'selected' : '';
+                    html += `<option value="${u}" ${sel}>${u}</option>`;
+                });
+                html += `</optgroup>`;
+            }
+            html += `</select>`;
+            return html;
+        }
+
+        function renderTrack() {
+            const gridContainer = document.getElementById('railroad-grid');
+            gridContainer.innerHTML = '';
+
+            trackSteps.forEach((step, idx) => {
+                const cell = document.createElement('div');
+                cell.className = 'rr-cell';
+
+                const removeBtnHtml = trackSteps.length > 1 
+                    ? `<button class="remove-step-btn" aria-label="Remove step ${idx + 1}" onclick="removeStep(${idx})">✕ Remove</button>` 
+                    : '';
+
+                cell.innerHTML = `
+                    ${removeBtnHtml}
+                    <div class="rr-numerator">
+                        <input type="number" class="rr-input" aria-label="Step ${idx + 1} Numerator Value" value="${step.numVal}" oninput="updateStepValue(${idx}, 'numVal', parseFloat(this.value)||0)">
+                        ${buildUnitSelectHtml(step.numUnit, idx, 'numUnit', `Step ${idx + 1} Numerator Unit`)}
+                    </div>
+
+                    <div class="rr-divider" aria-hidden="true"></div>
+
+                    <div class="rr-denominator">
+                        <input type="number" class="rr-input" aria-label="Step ${idx + 1} Denominator Value" value="${step.denVal}" oninput="updateStepValue(${idx}, 'denVal', parseFloat(this.value)||1)">
+                        ${buildUnitSelectHtml(step.denUnit, idx, 'denUnit', `Step ${idx + 1} Denominator Unit`)}
+                    </div>
+                `;
+
+                gridContainer.appendChild(cell);
+            });
+
+            const resultCell = document.createElement('div');
+            resultCell.className = 'rr-cell';
+            resultCell.style.borderRight = 'none';
+            resultCell.innerHTML = `
+                <div style="display: flex; align-items: center;">
+                    <div class="rr-equals" aria-hidden="true">=</div>
+                    <div class="rr-result-box">
+                        <div style="font-size: 0.85rem; font-weight: 800; color: var(--text-muted);">FINAL RESULT</div>
+                        <div id="result-val-display" style="font-size: 1.3rem; font-weight: bold; color: #15803d;">0</div>
+                        <div id="result-unit-display" style="font-size: 1rem; font-weight: bold; color: #0369a1;">unit</div>
+                    </div>
+                </div>
+            `;
+            gridContainer.appendChild(resultCell);
+
+            calculateAndRenderSolution();
+        }
+
+        function calculateAndRenderSolution() {
+            let totalNumeratorValue = 1;
+            let totalDenominatorValue = 1;
+
+            let numUnitsMap = {};
+            let denUnitsMap = {};
+
+            let numExpressionParts = [];
+            let denExpressionParts = [];
+
+            trackSteps.forEach((step) => {
+                const nVal = step.numVal || 0;
+                const dVal = step.denVal || 1;
+
+                totalNumeratorValue *= nVal;
+                totalDenominatorValue *= dVal;
+
+                numExpressionParts.push(nVal);
+                denExpressionParts.push(dVal);
+
+                if (step.numUnit && step.numUnit !== '') {
+                    numUnitsMap[step.numUnit] = (numUnitsMap[step.numUnit] || 0) + 1;
+                }
+
+                if (step.denUnit && step.denUnit !== '') {
+                    denUnitsMap[step.denUnit] = (denUnitsMap[step.denUnit] || 0) + 1;
+                }
+            });
+
+            const finalValue = totalDenominatorValue !== 0 ? (totalNumeratorValue / totalDenominatorValue) : 0;
+
+            let finalNumUnits = [];
+            let finalDenUnits = [];
+            let allUnitsSet = new Set([...Object.keys(numUnitsMap), ...Object.keys(denUnitsMap)]);
+
+            allUnitsSet.forEach(unit => {
+                let countNum = numUnitsMap[unit] || 0;
+                let countDen = denUnitsMap[unit] || 0;
+
+                let net = countNum - countDen;
+                if (net > 0) {
+                    finalNumUnits.push(net === 1 ? unit : `${unit}^${net}`);
+                } else if (net < 0) {
+                    finalDenUnits.push(Math.abs(net) === 1 ? unit : `${unit}^${Math.abs(net)}`);
+                }
+            });
+
+            let finalUnitStr = finalNumUnits.join('·');
+            if (finalDenUnits.length > 0) {
+                finalUnitStr += ' / (' + finalDenUnits.join('·') + ')';
+            }
+
+            document.getElementById('result-val-display').textContent = formatNumber(finalValue);
+            document.getElementById('result-unit-display').textContent = finalUnitStr || 'dimensionless';
+
+            document.getElementById('solution-text').innerHTML = `
+                Numerator Total: <strong>${formatNumber(totalNumeratorValue)}</strong><br>
+                Denominator Total: <strong>${formatNumber(totalDenominatorValue)}</strong>
+            `;
+
+            document.getElementById('math-expression').textContent = 
+                `(${numExpressionParts.join(' × ')}) / (${denExpressionParts.join(' × ')}) = ${formatNumber(finalValue)} ${finalUnitStr}`;
+        }
+
+        function initQuickConverter() {
+            const fromSelect = document.getElementById('qc-from');
+            const toSelect = document.getElementById('qc-to');
+
+            let html = '';
+            for (let group in allUnits) {
+                html += `<optgroup label="${group}">`;
+                allUnits[group].forEach(u => {
+                    html += `<option value="${u}">${u}</option>`;
+                });
+                html += `</optgroup>`;
+            }
+
+            fromSelect.innerHTML = html;
+            toSelect.innerHTML = html;
+
+            fromSelect.value = 'm';
+            toSelect.value = 'cm';
+            
+            quickConvert();
+        }
+
+        function quickConvert() {
+            const val = parseFloat(document.getElementById('qc-val').value);
+            const from = document.getElementById('qc-from').value;
+            const to = document.getElementById('qc-to').value;
+            const resElem = document.getElementById('qc-result');
+
+            if (isNaN(val)) {
+                resElem.textContent = "Invalid Input";
+                return;
+            }
+
+            let fromCat = Object.keys(allUnits).find(cat => allUnits[cat].includes(from));
+            let toCat = Object.keys(allUnits).find(cat => allUnits[cat].includes(to));
+
+            if (fromCat !== toCat) {
+                resElem.textContent = "Incompatible Units";
+                resElem.style.color = "#b91c1c";
+                return;
+            }
+
+            resElem.style.color = "#15803d";
+            const result = (val * unitFactors[from]) / unitFactors[to];
+            resElem.textContent = `${formatNumber(result)} ${to}`;
+        }
+
+        function formatNumber(num) {
+            if (isNaN(num)) return "0";
+            if (Math.abs(num) < 0.001 || Math.abs(num) >= 1000000) {
+                return num.toExponential(4);
+            }
+            return parseFloat(num.toFixed(4)).toLocaleString();
+        }
+
+        // Practice Generator Engine
+        let currentProblem = null;
+        let streak = 0;
+
+        const quizData = {
+            length: ['m', 'km', 'cm', 'mm'],
+            mass: ['g', 'kg', 'mg'],
+            volume: ['L', 'mL', 'kL']
+        };
+
+        function generateProblem() {
+            const cat = document.getElementById('category-select').value;
+            let categories = cat === 'all' ? ['length', 'mass', 'volume'] : [cat];
+            let chosenCat = categories[Math.floor(Math.random() * categories.length)];
+            let units = quizData[chosenCat];
+
+            let fromUnit = units[Math.floor(Math.random() * units.length)];
+            let toUnit;
+            do {
+                toUnit = units[Math.floor(Math.random() * units.length)];
+            } while (toUnit === fromUnit);
+
+            let val = Math.floor(Math.random() * 50) + 1;
+            let answer = (val * unitFactors[fromUnit]) / unitFactors[toUnit];
+
+            currentProblem = { val, fromUnit, toUnit, answer };
+
+            document.getElementById('problem-text').innerHTML = 
+                `Convert <strong>${val} ${fromUnit}</strong> into <strong>${toUnit}</strong>.`;
+            document.getElementById('target-unit').textContent = toUnit;
+            document.getElementById('user-answer').value = '';
+            document.getElementById('feedback-box').style.display = 'none';
+
+            document.getElementById('next-btn').classList.remove('btn-next-green');
+        }
+
+        function resetPractice() {
+            streak = 0;
+            document.getElementById('streak').textContent = streak;
+            generateProblem();
+        }
+
+        function checkAnswer() {
+            if (!currentProblem) return;
+
+            const userVal = parseFloat(document.getElementById('user-answer').value);
+            const feedbackBox = document.getElementById('feedback-box');
+            const nextBtn = document.getElementById('next-btn');
+
+            if (isNaN(userVal)) {
+                feedbackBox.textContent = "Please enter a valid number.";
+                feedbackBox.className = "feedback error";
+                return;
+            }
+
+            const margin = Math.abs(currentProblem.answer * 0.01);
+            const isCorrect = Math.abs(userVal - currentProblem.answer) <= Math.max(margin, 0.0001);
+
+            if (isCorrect) {
+                streak++;
+                feedbackBox.className = "feedback success";
+                feedbackBox.innerHTML = `<strong>Correct! 🎉</strong> ${currentProblem.val} ${currentProblem.fromUnit} = ${formatNumber(currentProblem.answer)} ${currentProblem.toUnit}`;
+                nextBtn.classList.add('btn-next-green');
+            } else {
+                streak = 0;
+                feedbackBox.className = "feedback error";
+                feedbackBox.innerHTML = `<strong>Not quite.</strong> Correct answer is <strong>${formatNumber(currentProblem.answer)} ${currentProblem.toUnit}</strong>`;
+                nextBtn.classList.remove('btn-next-green');
+            }
+
+            document.getElementById('streak').textContent = streak;
+        }
+
+        window.onload = function() {
+            initDefaultTrack();
+            initQuickConverter();
+            generateProblem();
+        };
+    </script>
+</body>
+</html>

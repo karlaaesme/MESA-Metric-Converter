@@ -828,9 +828,26 @@
             trackSteps[index][field] = value;
             calculateAndRenderSolution();
         }
+        
+        function onUnitChange(index) {
+            const step = trackSteps[index];
+            // If it is a conversion step (index > 0) and both units are selected
+            if (index > 0 && step.numUnit && step.denUnit) {
+                const numFactor = unitFactors[step.numUnit];
+                const denFactor = unitFactors[step.denUnit];
+        
+                if (numFactor && denFactor) {
+                    // Calculate how many numUnits are in 1 denUnit
+                    const ratio = denFactor / numFactor;
+                    step.numVal = parseFloat(ratio.toFixed(6));
+                }
+            }
+            
+            renderTrack();
+        }
 
         function buildUnitSelectHtml(selectedUnit, index, field, ariaLabel) {
-            let html = `<select class="rr-unit-select" aria-label="${ariaLabel}" onchange="updateStepValue(${index}, '${field}', this.value)">`;
+            let html = `<select class="rr-unit-select" aria-label="${ariaLabel}" onchange="updateStepValue(${index}, '${field}', this.value); onUnitChange(${index});">`;
             html += `<option value="" ${selectedUnit === '' ? 'selected' : ''}>--</option>`;
             
             for (let group in allUnits) {
